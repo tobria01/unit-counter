@@ -3,6 +3,7 @@
 (() => {
   const RESET_HOUR = 4; // the day runs 04:00 → 04:00
   const STORE_KEY = 'unitCounter.v1';
+  const APP_VERSION = 'v3'; // shown in Settings — keep in sync with CACHE in sw.js
 
   const $ = (id) => document.getElementById(id);
 
@@ -28,6 +29,7 @@
     setAllowance: $('setAllowance'),
     setSupName: $('setSupName'),
     setSupTarget: $('setSupTarget'),
+    versionLabel: $('versionLabel'),
     toast: $('toast'),
   };
 
@@ -323,6 +325,7 @@
 
     updateLogButton();
     render();
+    els.versionLabel.textContent = 'Version ' + APP_VERSION;
 
     if (!loaded) {
       openSettings();
@@ -343,8 +346,22 @@
 
     if ('serviceWorker' in navigator &&
         (location.protocol === 'https:' || location.hostname === 'localhost')) {
-      navigator.serviceWorker.register('./sw.js')
+      // updateViaCache: 'none' — always fetch sw.js fresh, so updates are
+      // detected on every open with internet (not subject to HTTP caching).
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
         .catch((err) => console.warn('Service worker registration failed:', err));
+
+      // If a newly installed service worker takes over while the app is
+      // open, refresh once so the new version shows immediately.
+      if (navigator.serviceWorker.controller) {
+        let reloaded = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!reloaded) {
+            reloaded = true;
+            location.reload();
+          }
+        });
+      }
     }
   }
 

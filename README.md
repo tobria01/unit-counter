@@ -41,9 +41,15 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
 - `app.js` — all logic and UI state
-- `sw.js` — service worker; **bump `CACHE` when you change any asset** so devices pick up the update
+- `sw.js` — service worker cache; **when you change any asset, bump `CACHE` in `sw.js` and `APP_VERSION` in `app.js` together** so devices pick up the update
 - `manifest.json` — PWA manifest
 - `icons/generate.py` — regenerates the PNG icons (needs Pillow)
+
+### Updates on the phone
+
+After pushing a change, just open the app once with internet — it detects the
+new version and refreshes itself in place. The running version is shown at the
+bottom of Settings, so you can always tell whether the phone is up to date.
 
 ### How the day key works
 
