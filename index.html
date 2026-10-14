@@ -23,12 +23,29 @@
       <h1 class="sr-only">Unit Counter</h1>
       <header class="topbar">
         <div id="todayLabel" class="date-label"></div>
-        <button id="settingsBtn" class="icon-btn" type="button" aria-label="Settings">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
+        <div class="topbar-actions">
+          <button id="mpOpenBtn" class="icon-btn" type="button" aria-label="Meal prep calculator">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="2" width="16" height="20" rx="2"/>
+              <line x1="8" y1="6" x2="16" y2="6"/>
+              <line x1="8" y1="10" x2="8.01" y2="10"/>
+              <line x1="12" y1="10" x2="12.01" y2="10"/>
+              <line x1="16" y1="10" x2="16.01" y2="10"/>
+              <line x1="8" y1="14" x2="8.01" y2="14"/>
+              <line x1="12" y1="14" x2="12.01" y2="14"/>
+              <line x1="16" y1="14" x2="16.01" y2="14"/>
+              <line x1="8" y1="18" x2="8.01" y2="18"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+              <line x1="16" y1="18" x2="16.01" y2="18"/>
+            </svg>
+          </button>
+          <button id="settingsBtn" class="icon-btn" type="button" aria-label="Settings">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
       </header>
 
       <section class="budget" id="budgetCard" aria-live="polite">
@@ -91,6 +108,70 @@
       <p class="hint">A day runs from 04:00 to 04:00 and resets automatically.<br>
       Clear the supplement name to hide it. Everything is stored only on this device.</p>
       <p class="hint version" id="versionLabel"></p>
+    </section>
+
+    <!-- ============ MEAL PREP VIEW ============ -->
+    <section id="view-mealprep" class="view hidden">
+      <header class="topbar">
+        <button id="mpBackBtn" class="icon-btn back" type="button" aria-label="Back">‹ Back</button>
+        <h2>Meal prep</h2>
+        <span class="topbar-spacer" aria-hidden="true"></span>
+      </header>
+
+      <section class="mp-card">
+        <div class="mp-label">Add ingredient</div>
+        <div class="mp-form-row">
+          <label class="mp-field">
+            <span>Divisor</span>
+            <select id="mpDivisor">
+              <option value="80" selected>80</option>
+              <option value="60">60</option>
+              <option value="50">50</option>
+            </select>
+          </label>
+          <label class="mp-field">
+            <span>Protein / 100 g</span>
+            <input id="mpProtein" type="text" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 3.4">
+          </label>
+          <label class="mp-field">
+            <span>Grams in batch</span>
+            <input id="mpGrams" type="text" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 500">
+          </label>
+        </div>
+        <div class="mp-preview" id="mpPreview"></div>
+        <button id="mpAddBtn" class="mp-add-btn" type="button" disabled>+ Add ingredient</button>
+      </section>
+
+      <section class="mp-card hidden" id="mpIngredientsCard">
+        <div class="mp-label">Ingredients</div>
+        <div id="mpIngredientsList"></div>
+        <div class="mp-total" id="mpTotalUnits"></div>
+      </section>
+
+      <section class="mp-card hidden" id="mpResultCard">
+        <div class="mp-label">Label result</div>
+        <label class="mp-field mp-weight-field">
+          <span>Total weight of the prep (g)</span>
+          <input id="mpTotalWeight" type="text" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 1800">
+        </label>
+        <div class="mp-result">
+          <div class="mp-result-value dim" id="mpResultValue">—</div>
+          <div class="mp-result-sub" id="mpResultSub"></div>
+        </div>
+        <div class="mp-save-row">
+          <label class="mp-field">
+            <span>Name</span>
+            <input id="mpPrepName" type="text" autocomplete="off" maxlength="24" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. Chicken-rice">
+          </label>
+          <button id="mpSaveBtn" class="mp-save-btn" type="button" disabled>Save</button>
+        </div>
+        <button id="mpClearBtn" class="mp-clear-btn" type="button">Clear meal prep</button>
+      </section>
+
+      <section class="mp-card hidden" id="mpSavedCard">
+        <div class="mp-label">Saved preps</div>
+        <div id="mpSavedList"></div>
+      </section>
     </section>
 
   </main>

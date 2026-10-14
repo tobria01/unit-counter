@@ -338,6 +338,253 @@ button {
   opacity: 0.7;
 }
 
+/* ---------- meal prep ---------- */
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mp-card {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 1px solid var(--card-edge);
+}
+
+.mp-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.mp-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.mp-field {
+  display: grid;
+  gap: 6px;
+}
+
+.mp-field span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dim);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-field input,
+.mp-field select {
+  width: 100%;
+  height: 48px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: 1px solid var(--card-edge);
+  background: #0f141f;
+  color: var(--text);
+  font-size: 17px;
+  font-family: inherit;
+  user-select: text;
+  -webkit-user-select: text;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.mp-field select {
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238d97ac' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.mp-field input:focus,
+.mp-field select:focus {
+  outline: none;
+  border-color: #4c8cff;
+}
+
+.mp-preview {
+  min-height: 22px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--dim);
+}
+
+.mp-preview.has {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.mp-add-btn {
+  margin-top: 10px;
+  width: 100%;
+  height: 50px;
+  border-radius: 14px;
+  background: var(--orange);
+  color: #1f1300;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.mp-add-btn:active {
+  transform: scale(0.98);
+  filter: brightness(0.9);
+}
+
+.mp-add-btn:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.mp-ing-row,
+.mp-saved-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--card-edge);
+}
+
+.mp-ing-row:last-child,
+.mp-saved-row:last-child {
+  border-bottom: none;
+}
+
+.mp-ing-info,
+.mp-saved-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mp-ing-sub {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.mp-ing-del {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: var(--dim);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.mp-ing-del:active {
+  background: var(--key);
+  color: var(--red);
+}
+
+.mp-total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--card-edge);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.mp-weight-field {
+  margin-top: 4px;
+}
+
+.mp-weight-field span {
+  font-size: 13px;
+}
+
+.mp-result {
+  margin-top: 14px;
+  text-align: center;
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #161c2b 0%, #121724 100%);
+  border: 1px solid var(--card-edge);
+}
+
+.mp-result-value {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.mp-result-value.dim {
+  color: var(--dim);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.mp-result-sub {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--dim);
+}
+
+.mp-save-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.mp-save-btn {
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: var(--green);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.mp-save-btn:active {
+  background: var(--green-press);
+}
+
+.mp-save-btn:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.mp-clear-btn {
+  margin-top: 10px;
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-edge);
+  color: var(--dim);
+  font-size: 15px;
+}
+
+.mp-clear-btn:active {
+  background: var(--key);
+  color: var(--text);
+}
+
+.mp-saved-name {
+  font-size: 16px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ---------- toast ---------- */
 
 #toast {
