@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Unit Counter</title>
+  <meta name="description" content="Fast daily PKU unit and supplement counter">
+  <meta name="theme-color" content="#0b0e14">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Units">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+
+    <!-- ============ MAIN VIEW ============ -->
+    <section id="view-main" class="view">
+      <h1 class="sr-only">Unit Counter</h1>
+      <header class="topbar">
+        <div id="todayLabel" class="date-label"></div>
+        <button id="settingsBtn" class="icon-btn" type="button" aria-label="Settings">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </header>
+
+      <section class="budget" id="budgetCard" aria-live="polite">
+        <div class="remaining" id="remainingValue">0</div>
+        <div class="caption" id="remainingCaption">units left</div>
+        <div class="caption small" id="usedLabel"></div>
+      </section>
+
+      <section class="units-section">
+        <div class="keypad" id="keypad">
+          <button type="button" class="key" data-k="1">1</button>
+          <button type="button" class="key" data-k="2">2</button>
+          <button type="button" class="key" data-k="3">3</button>
+          <button type="button" class="key" data-k="4">4</button>
+          <button type="button" class="key" data-k="5">5</button>
+          <button type="button" class="key" data-k="6">6</button>
+          <button type="button" class="key" data-k="7">7</button>
+          <button type="button" class="key" data-k="8">8</button>
+          <button type="button" class="key" data-k="9">9</button>
+          <button type="button" class="key alt" data-k="." aria-label="Decimal separator">.</button>
+          <button type="button" class="key" data-k="0">0</button>
+          <button type="button" class="key alt" data-k="back" aria-label="Delete">⌫</button>
+        </div>
+        <button id="logBtn" class="log-btn" type="button">Log <span class="log-amount dim" id="logAmount">−1</span> <span id="logUnit">unit</span></button>
+        <button id="undoBtn" class="undo-btn ghosted" type="button">Undo</button>
+      </section>
+
+      <section class="supplement" id="supCard">
+        <div class="sup-info">
+          <div class="sup-name" id="supName">Supplement</div>
+          <div class="sup-count" id="supCount">0 of 4 taken</div>
+        </div>
+        <button id="supAddBtn" class="sup-add" type="button" aria-label="Log one supplement">+</button>
+      </section>
+    </section>
+
+    <!-- ============ SETTINGS VIEW ============ -->
+    <section id="view-settings" class="view hidden">
+      <header class="topbar">
+        <button id="backBtn" class="icon-btn back" type="button" aria-label="Back">‹ Back</button>
+        <h2>Settings</h2>
+        <span class="topbar-spacer" aria-hidden="true"></span>
+      </header>
+
+      <div class="form">
+        <label class="field">
+          <span>Daily unit allowance</span>
+          <input id="setAllowance" type="text" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span>Supplement name</span>
+          <input id="setSupName" type="text" autocomplete="off" maxlength="24" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span>Supplement daily target</span>
+          <input id="setSupTarget" type="text" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </label>
+      </div>
+
+      <p class="hint">A day runs from 04:00 to 04:00 and resets automatically.<br>
+      Clear the supplement name to hide it. Everything is stored only on this device.</p>
+    </section>
+
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
