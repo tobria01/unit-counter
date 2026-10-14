@@ -1,4 +1,4 @@
-const CACHE = 'unit-counter-v1';
+const CACHE = 'unit-counter-v2';
 
 // Core shell — if any of these fail to cache, offline mode is broken,
 // so installation fails loudly instead of silently.

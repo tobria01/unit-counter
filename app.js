@@ -145,7 +145,7 @@
     // Default: tapping Log without typing registers 1 unit.
     const n = amt === '' ? 1 : round2(parseFloat(amt));
     els.logBtn.disabled = !(Number.isFinite(n) && n > 0);
-    els.logAmount.textContent = '−' + pretty(n);
+    els.logAmount.textContent = pretty(n);
     els.logAmount.classList.toggle('dim', amt === '');
     els.logUnit.textContent = n === 1 ? 'unit' : 'units';
   }
@@ -164,8 +164,8 @@
     render();
     const left = round2(settings.allowance - t.used);
     toast(left < 0
-      ? '−' + fmt(n) + ' units · ' + fmt(-left) + ' over budget'
-      : '−' + fmt(n) + ' units logged');
+      ? fmt(n) + ' units logged · ' + fmt(-left) + ' over budget'
+      : fmt(n) + ' units logged');
   }
 
   // ---------- supplement ----------
@@ -222,7 +222,7 @@
       const time = new Date(last.ts).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
       els.undoBtn.classList.remove('ghosted');
       els.undoBtn.textContent = last.k === 'u'
-        ? 'Undo −' + fmt(last.a) + ' units (' + time + ')'
+        ? 'Undo ' + fmt(last.a) + ' units (' + time + ')'
         : 'Undo ' + settings.supName + ' (' + time + ')';
     } else {
       els.undoBtn.classList.add('ghosted');
