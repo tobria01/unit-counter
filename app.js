@@ -4,7 +4,7 @@
   const RESET_HOUR = 4; // the day runs 04:00 → 04:00
   const STORE_KEY = 'unitCounter.v1';
   const PREP_STORE_KEY = 'unitCounter.mealprep.v1';
-  const APP_VERSION = 'v5'; // shown in Settings — keep in sync with CACHE in sw.js
+  const APP_VERSION = 'v6'; // shown in Settings — keep in sync with CACHE in sw.js
 
   const $ = (id) => document.getElementById(id);
 
@@ -220,6 +220,30 @@
     toast('Undone');
   }
 
+  // ---------- icon badge ----------
+
+  let lastBadgeKey = null;
+
+  // iOS 16.4+, installed web apps only: mirror the remaining units onto the
+  // home-screen icon. A number = units left; a plain dot = budget exhausted
+  // (setAppBadge(0) CLEARS the badge per spec, so a rounded 0 must show as a
+  // dot). iOS suspends closed web apps and there is no push server by
+  // design, so the badge refreshes on the next app open — it cannot reset
+  // itself at 04:00 while the app is closed.
+  function updateBadge(left) {
+    if (typeof navigator.setAppBadge !== 'function') return;
+    const n = Math.round(left);
+    const key = n > 0 ? String(n) : 'dot';
+    if (key === lastBadgeKey) return; // skip redundant OS calls
+    lastBadgeKey = key;
+    try {
+      if (n > 0) navigator.setAppBadge(n).catch(() => {});
+      else navigator.setAppBadge().catch(() => {});
+    } catch (err) {
+      /* badge unavailable (not installed / blocked) — ignore */
+    }
+  }
+
   // ---------- render ----------
 
   function render() {
@@ -233,6 +257,7 @@
 
     const left = round2(settings.allowance - t.used);
     const over = left < 0;
+    updateBadge(left);
     els.budget.classList.toggle('over', over);
     els.remainingValue.textContent = pretty(Math.abs(left));
     els.remainingCaption.textContent = over ? 'units over budget' : 'units left';

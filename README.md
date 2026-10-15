@@ -12,6 +12,7 @@ No food databases, no accounts, no server — everything stays on the phone.
 - **Protein supplement** — separate counter with its own daily target; one tap on **+** logs a serving
 - **Undo** — undoes the last action (units or supplement) and tells you what it was
 - **04:00 → 04:00 day** — counters reset automatically at 4 AM, so late-night eating still counts to the previous day
+- **Units-left badge** — the home-screen icon badge shows the units remaining today; a plain dot means the budget is exhausted (iOS 16.4+, needs Add to Home Screen)
 - **Meal prep calculator** — label big batches: add ingredients (80/60/50 divisor + protein per 100 g + grams in batch + optional label), enter the total weight, and get **grams per unit** for the finished prep. Save preps by name for later reuse
 - **100 % offline** — after installing it to your home screen, it works without internet; data is stored only on the device
 
@@ -29,6 +30,7 @@ From now on, open it from the home-screen icon — it runs fullscreen and fully 
 - **Log units:** type e.g. `1.5` on the keypad → tap the green button. Done.
 - **Log a supplement:** tap the orange **+**.
 - **Made a mistake:** tap **Undo** (repeatable).
+- **Icon badge:** shows the units left; a dot means over budget. It updates whenever the app is opened — iOS suspends closed web apps and this app has no server, so it cannot refresh itself at 04:00; the badge corrects itself on the first open of the new day.
 - **Meal prep (calculator icon):** for batch cooking — for each ingredient choose the divisor (80/60/50), enter its protein per 100 g, the grams you used and an optional label (e.g. "chicken"); the app sums the units. Enter the total weight of the finished prep to get **how many grams equal one unit** (plus units per 100 g) — the number for your label. Save preps by name; tap a saved prep to reload it, ✕ to delete. The in-progress calculation survives closing the app.
 - **Settings (⚙):** daily allowance, supplement name, supplement daily target.
   Changes save immediately. Clear the supplement name to hide the supplement card.
