@@ -4,7 +4,7 @@
   const RESET_HOUR = 4; // the day runs 04:00 → 04:00
   const STORE_KEY = 'unitCounter.v1';
   const PREP_STORE_KEY = 'unitCounter.mealprep.v1';
-  const APP_VERSION = 'v4'; // shown in Settings — keep in sync with CACHE in sw.js
+  const APP_VERSION = 'v5'; // shown in Settings — keep in sync with CACHE in sw.js
 
   const $ = (id) => document.getElementById(id);
 
@@ -37,6 +37,7 @@
     mpDivisor: $('mpDivisor'),
     mpProtein: $('mpProtein'),
     mpGrams: $('mpGrams'),
+    mpLabel: $('mpLabel'),
     mpPreview: $('mpPreview'),
     mpAddBtn: $('mpAddBtn'),
     mpIngredientsCard: $('mpIngredientsCard'),
@@ -71,7 +72,7 @@
   let lastRenderedRemaining = null;
 
   /** meal prep calculator — separate storage, not tied to the daily counters */
-  let prep = { ingredients: [], totalWeight: null };
+  let prep = { divisor: 80, ingredients: [], totalWeight: null };
   let savedPreps = [];
 
   // ---------- storage ----------
@@ -281,6 +282,7 @@
     els.setSupName.value = settings.supName;
     els.setSupTarget.value = String(settings.supTarget);
     els.main.classList.add('hidden');
+    els.mealprep.classList.add('hidden');
     els.settings.classList.remove('hidden');
   }
 
@@ -331,8 +333,57 @@
   function mpParseNum(raw) {
     if (raw === '' || raw === null || raw === undefined) return null;
     const v = Number(String(raw).replace(',', '.'));
-    if (!Number.isFinite(v) || v < 0) return null;
+    if (!Number.isFinite(v) || v < 0 || v > 1e6) return null;
     return v;
+  }
+
+  // Validate and normalize an ingredient loaded from storage: never trust
+  // the stored `units` — always recompute it from the raw inputs.
+  function mpValidIngredient(i) {
+    if (!i || typeof i !== 'object') return false;
+    const d = Number(i.divisor);
+    const p = Number(i.protein);
+    const g = Number(i.grams);
+    return Number.isFinite(d) && d > 0 &&
+           Number.isFinite(p) && p >= 0 &&
+           Number.isFinite(g) && g > 0;
+  }
+
+  function mpNormalizeIngredient(i) {
+    const divisor = Number(i.divisor);
+    const protein = Number(i.protein);
+    const grams = Number(i.grams);
+    return {
+      divisor,
+      protein: round2(protein),
+      grams: round2(grams),
+      units: round2(grams * protein / divisor),
+    };
+  }
+
+  // Validate a saved prep loaded from storage; derived numbers (units,
+  // totals, g/unit) are recomputed, never trusted. Returns null if invalid.
+  function mpValidPrep(p) {
+    if (!p || typeof p !== 'object' || !Array.isArray(p.ingredients)) return null;
+    const ings = p.ingredients.filter(mpValidIngredient).map(mpNormalizeIngredient);
+    if (ings.length === 0) return null;
+    const w = Number(p.totalWeight);
+    if (!Number.isFinite(w) || w <= 0) return null;
+    if (typeof p.name !== 'string' || p.name.trim() === '') return null;
+    let total = 0;
+    for (const ing of ings) total += ing.units;
+    total = round2(total);
+    if (total <= 0) return null;
+    return {
+      id: Number.isFinite(Number(p.id)) ? Number(p.id) : Date.now(),
+      name: p.name,
+      date: typeof p.date === 'string' ? p.date
+        : new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+      ingredients: ings,
+      totalWeight: round2(w),
+      totalUnits: total,
+      gPerUnit: round1(w / total),
+    };
   }
 
   function mpTotalUnits() {
@@ -356,14 +407,18 @@
       const data = JSON.parse(raw);
       if (!data || typeof data !== 'object') return;
       if (Array.isArray(data.savedPreps)) {
-        savedPreps = data.savedPreps.filter((p) =>
-          p && typeof p === 'object' && Array.isArray(p.ingredients));
+        savedPreps = data.savedPreps
+          .map(mpValidPrep)
+          .filter(Boolean);
       }
       if (data.prep && typeof data.prep === 'object' && Array.isArray(data.prep.ingredients)) {
-        prep.ingredients = data.prep.ingredients.filter((i) =>
-          i && Number.isFinite(Number(i.divisor)) && Number.isFinite(Number(i.protein)) && Number.isFinite(Number(i.grams)));
+        prep.ingredients = data.prep.ingredients
+          .filter(mpValidIngredient)
+          .map(mpNormalizeIngredient);
         const w = mpParseNum(data.prep.totalWeight);
         prep.totalWeight = (w === null || w === 0) ? null : w;
+        const d = Number(data.prep.divisor);
+        if (d === 80 || d === 60 || d === 50) prep.divisor = d;
       }
     } catch (err) {
       /* corrupted — start fresh */
@@ -380,7 +435,7 @@
 
   function mpUpdatePreview() {
     const { divisor, protein, grams } = mpFormValues();
-    const ok = Number.isFinite(protein) && protein > 0 &&
+    const ok = Number.isFinite(protein) && protein > 0 && protein <= 100 &&
                Number.isFinite(grams) && grams > 0;
     els.mpAddBtn.disabled = !ok;
     if (!ok) {
@@ -397,7 +452,8 @@
 
   function mpAddIngredient() {
     const { divisor, protein, grams } = mpFormValues();
-    if (!(Number.isFinite(protein) && protein > 0 && Number.isFinite(grams) && grams > 0)) return;
+    if (!(Number.isFinite(protein) && protein > 0 && protein <= 100 &&
+          Number.isFinite(grams) && grams > 0)) return;
     const units = round2(grams * protein / divisor);
     prep.ingredients.push({ divisor, protein: round2(protein), grams: round2(grams), units });
     els.mpProtein.value = '';
@@ -414,10 +470,11 @@
     mpRender();
   }
 
+  // Live-updates the result while typing; persistence happens on
+  // change/blur (same pattern as the settings inputs).
   function mpUpdateWeight() {
     const w = mpParseNum(els.mpTotalWeight.value);
     prep.totalWeight = (w === null || w === 0) ? null : w;
-    mpSave();
     mpRender();
   }
 
@@ -459,7 +516,7 @@
     if (hasIngredients && Number.isFinite(w) && w > 0 && total > 0) {
       const gPerUnit = w / total;
       els.mpResultValue.textContent = fmt1(gPerUnit) + ' g per unit';
-      els.mpResultSub.textContent = fmt1(100 / gPerUnit) + ' units per 100 g';
+      els.mpResultSub.textContent = fmt(100 / gPerUnit) + ' units per 100 g';
       els.mpResultValue.classList.remove('dim');
       els.mpSaveBtn.disabled = false;
     } else {
@@ -538,7 +595,10 @@
     prep.totalWeight = p.totalWeight;
     els.mpTotalWeight.value = String(p.totalWeight);
     els.mpPrepName.value = p.name;
+    els.mpProtein.value = '';
+    els.mpGrams.value = '';
     mpSave();
+    mpUpdatePreview();
     mpRender();
     toast('Loaded "' + p.name + '"');
     window.scrollTo(0, 0);
@@ -561,7 +621,9 @@
     els.main.classList.add('hidden');
     els.settings.classList.add('hidden');
     els.mealprep.classList.remove('hidden');
+    els.mpDivisor.value = String(prep.divisor);
     els.mpTotalWeight.value = prep.totalWeight === null ? '' : String(prep.totalWeight);
+    window.scrollTo(0, 0);
     mpUpdatePreview();
     mpRender();
   }
@@ -590,11 +652,17 @@
     els.mpOpenBtn.addEventListener('click', openMealPrep);
     els.mpBackBtn.addEventListener('click', closeMealPrep);
     els.mpAddBtn.addEventListener('click', mpAddIngredient);
-    els.mpDivisor.addEventListener('change', mpUpdatePreview);
+    els.mpDivisor.addEventListener('change', () => {
+      prep.divisor = Number(els.mpDivisor.value);
+      mpSave();
+      mpUpdatePreview();
+    });
     els.mpProtein.addEventListener('input', mpUpdatePreview);
     els.mpGrams.addEventListener('input', mpUpdatePreview);
     els.mpTotalWeight.addEventListener('input', mpUpdateWeight);
+    els.mpTotalWeight.addEventListener('change', mpSave);
     els.mpTotalWeight.addEventListener('blur', () => {
+      mpSave();
       els.mpTotalWeight.value = prep.totalWeight === null ? '' : String(prep.totalWeight);
     });
     els.mpSaveBtn.addEventListener('click', mpSavePrep);
