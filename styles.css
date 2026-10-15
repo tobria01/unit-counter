@@ -369,6 +369,15 @@ button {
   gap: 10px;
 }
 
+/* Full-width optional label under the numeric fields */
+.mp-label-field {
+  margin-top: 10px;
+}
+
+.mp-label-field span {
+  font-size: 13px;
+}
+
 .mp-field {
   display: grid;
   gap: 6px;
@@ -472,6 +481,10 @@ button {
   margin-top: 2px;
   font-size: 13px;
   color: var(--dim);
+}
+
+.mp-ing-name {
+  font-weight: 600;
 }
 
 .mp-ing-del {

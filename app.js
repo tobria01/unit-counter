@@ -337,6 +337,11 @@
     return v;
   }
 
+  // Optional per-ingredient name; trimmed and capped to the input's maxlength.
+  function mpNormalizeLabel(raw) {
+    return typeof raw === 'string' ? raw.trim().slice(0, 24) : '';
+  }
+
   // Validate and normalize an ingredient loaded from storage: never trust
   // the stored `units` — always recompute it from the raw inputs.
   function mpValidIngredient(i) {
@@ -358,6 +363,7 @@
       protein: round2(protein),
       grams: round2(grams),
       units: round2(grams * protein / divisor),
+      label: mpNormalizeLabel(i.label),
     };
   }
 
@@ -430,6 +436,7 @@
       divisor: Number(els.mpDivisor.value),
       protein: mpParseNum(els.mpProtein.value),
       grams: mpParseNum(els.mpGrams.value),
+      label: mpNormalizeLabel(els.mpLabel.value),
     };
   }
 
@@ -451,17 +458,18 @@
   }
 
   function mpAddIngredient() {
-    const { divisor, protein, grams } = mpFormValues();
+    const { divisor, protein, grams, label } = mpFormValues();
     if (!(Number.isFinite(protein) && protein > 0 && protein <= 100 &&
           Number.isFinite(grams) && grams > 0)) return;
     const units = round2(grams * protein / divisor);
-    prep.ingredients.push({ divisor, protein: round2(protein), grams: round2(grams), units });
+    prep.ingredients.push({ divisor, protein: round2(protein), grams: round2(grams), units, label });
     els.mpProtein.value = '';
     els.mpGrams.value = '';
+    els.mpLabel.value = '';
     mpSave();
     mpUpdatePreview();
     mpRender();
-    toast('+' + fmt(units) + ' units');
+    toast('+' + fmt(units) + ' units' + (label ? ' · ' + label : ''));
   }
 
   function mpRemoveIngredient(idx) {
@@ -488,7 +496,14 @@
       const info = document.createElement('div');
       info.className = 'mp-ing-info';
       const main = document.createElement('div');
-      main.textContent = fmt(ing.grams) + ' g · ' + fmt(ing.units) + ' units';
+      if (ing.label) {
+        const name = document.createElement('span');
+        name.className = 'mp-ing-name';
+        name.textContent = ing.label;
+        main.appendChild(name);
+        main.appendChild(document.createTextNode(' · '));
+      }
+      main.appendChild(document.createTextNode(fmt(ing.grams) + ' g · ' + fmt(ing.units) + ' units'));
       const sub = document.createElement('div');
       sub.className = 'mp-ing-sub';
       sub.textContent = '÷ ' + ing.divisor + ' · ' + fmt(ing.protein) + ' g protein/100 g';
@@ -498,7 +513,7 @@
       del.type = 'button';
       del.className = 'mp-ing-del';
       del.textContent = '✕';
-      del.setAttribute('aria-label', 'Remove ingredient');
+      del.setAttribute('aria-label', ing.label ? 'Remove ' + ing.label : 'Remove ingredient');
       del.addEventListener('click', () => mpRemoveIngredient(i));
       row.appendChild(info);
       row.appendChild(del);
@@ -597,6 +612,7 @@
     els.mpPrepName.value = p.name;
     els.mpProtein.value = '';
     els.mpGrams.value = '';
+    els.mpLabel.value = '';
     mpSave();
     mpUpdatePreview();
     mpRender();
@@ -611,6 +627,7 @@
     els.mpPrepName.value = '';
     els.mpProtein.value = '';
     els.mpGrams.value = '';
+    els.mpLabel.value = '';
     mpSave();
     mpUpdatePreview();
     mpRender();
